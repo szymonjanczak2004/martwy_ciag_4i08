@@ -204,3 +204,17 @@ header p {
 .stats-container { background: #fff; }
 .stats-title { background: var(--main-green); color: #000; }
 .stats-text { font-size: 1.5rem; font-weight: bold; color: #000; }
+
+.voice-panel {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+}
+
+.voice-panel p {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: bold;
+}
