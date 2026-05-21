@@ -43,6 +43,18 @@
             <div class="camera-status">
                 <h2 id="ui-phase">WAIT_START</h2>
                 <p id="ui-feedback">Zajmij pozycję przed kamerą</p>
+
+
+                <div class="voice-panel">
+                    <button id="voice-toggle-btn" class="btn btn-live" onclick="toggleVoiceOutput()">
+                        🔊 GŁOS: ON
+                    </button>
+                    <button id="mic-toggle-btn" class="btn btn-upload" onclick="toggleVoiceRecognition()">
+                        🎤 MIKROFON: OFF
+                    </button>
+                    <p id="voice-status">Komunikaty głosowe aktywne</p>
+                    <p id="mic-status">Rozpoznawanie mowy wyłączone</p>
+                </div>
             </div>
         </div>
 
