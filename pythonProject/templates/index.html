@@ -23,8 +23,6 @@
     
     <!-- SEKCJA TRENINGU -->
     <section id="training" class="tab-content active">
-<<<<<<< HEAD
-=======
         
         <!-- TOP LEFT: Proper Form -->
         <div class="brutal-box form-box">
@@ -45,11 +43,22 @@
             <div class="camera-status">
                 <h2 id="ui-phase">WAIT_START</h2>
                 <p id="ui-feedback">Zajmij pozycję przed kamerą</p>
+
+
+                <div class="voice-panel">
+                    <button id="voice-toggle-btn" class="btn btn-live" onclick="toggleVoiceOutput()">
+                        🔊 GŁOS: ON
+                    </button>
+                    <button id="mic-toggle-btn" class="btn btn-upload" onclick="toggleVoiceRecognition()">
+                        🎤 MIKROFON: OFF
+                    </button>
+                    <p id="voice-status">Komunikaty głosowe aktywne</p>
+                    <p id="mic-status">Rozpoznawanie mowy wyłączone</p>
+                </div>
             </div>
         </div>
 
         <!-- BOTTOM LEFT: Video Box -->
->>>>>>> d0b9a608119eda0d90f7d0f8c11feae711db174b
         <div class="brutal-box video-box">
             <div class="box-title">📷 VIDEO</div>
             
@@ -64,28 +73,7 @@
             </div>
         </div>
 
-<<<<<<< HEAD
-        <div class="brutal-box form-box">
-             <div class="box-title">⚠ ANALIZA BŁĘDÓW</div>
-             <div class="analysis-controls">
-                <button class="btn btn-live" onclick="sendAnalysisControl('start')">START</button>
-                <button class="btn btn-stop" onclick="sendAnalysisControl('stop')">STOP + ANALIZA</button>
-            </div>
-            <div class="analysis-summary">
-                <h3>Co poprawić w serii</h3>
-                <ul id="improvement-summary-list" class="improvement-list">
-                    <li>Brak danych - uruchom serię przyciskiem START.</li>
-                </ul>
-            </div>
-            <div class="rule-list" id="live-error-list">
-                <div class="rule-item">Uruchom START, aby rozpocząć analizę techniki.</div>
-                <div class="rule-item">Po STOP zobaczysz pełne wskazówki dla serii i powtórzeń.</div>
-            </div>
-        </div>
-
-=======
         <!-- BOTTOM RIGHT: Current Set -->
->>>>>>> d0b9a608119eda0d90f7d0f8c11feae711db174b
         <div class="brutal-box set-box" id="current-set-container">
             <div class="box-title">✚ NEW TRAINING BLOCK</div>
             
@@ -102,10 +90,6 @@
                 <button class="btn btn-cancel" onclick="resetBlockForm()">ANULUJ</button>
             </div>
         </div>
-<<<<<<< HEAD
-
-=======
->>>>>>> d0b9a608119eda0d90f7d0f8c11feae711db174b
     </section>
 
     <!-- SEKCJA HISTORII -->

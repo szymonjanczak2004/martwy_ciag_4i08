@@ -1,5 +1,6 @@
 let isUploading = false;
 
+<<<<<<< HEAD
 function escapeHtml(unsafe) {
     return String(unsafe)
         .replace(/&/g, "&amp;")
@@ -9,6 +10,8 @@ function escapeHtml(unsafe) {
         .replace(/'/g, "&#039;");
 }
 
+=======
+>>>>>>> d0b9a608119eda0d90f7d0f8c11feae711db174b
 function reloadVideoFeed() {
     const videoImg = document.querySelector('.video-feed-container img');
     videoImg.src = "/video_feed?" + new Date().getTime();
@@ -33,6 +36,7 @@ function triggerUpload() {
     document.getElementById('video-upload-input').click();
 }
 
+<<<<<<< HEAD
 async function sendAnalysisControl(action) {
     const response = await fetch('/api/control', {
         method: 'POST',
@@ -88,12 +92,15 @@ function renderLiveErrorPanel(summary, feedback) {
     `;
 }
 
+=======
+>>>>>>> d0b9a608119eda0d90f7d0f8c11feae711db174b
 document.getElementById('video-upload-input').addEventListener('change', function() {
     if (this.files && this.files[0]) {
         const formData = new FormData();
         formData.append('file', this.files[0]);
 
         isUploading = true;
+<<<<<<< HEAD
         const errorList = document.getElementById('live-error-list');
         if (errorList) {
             errorList.innerHTML = `
@@ -101,6 +108,10 @@ document.getElementById('video-upload-input').addEventListener('change', functio
                 <div class="rule-item">Przesylanie i analiza pliku...</div>
             `;
         }
+=======
+        document.getElementById('ui-phase').innerText = "LOADING...";
+        document.getElementById('ui-feedback').innerText = "Przesyłanie i analiza pliku...";
+>>>>>>> d0b9a608119eda0d90f7d0f8c11feae711db174b
 
         fetch('/upload_video', { method: 'POST', body: formData })
             .then(response => response.json())
@@ -187,8 +198,14 @@ setInterval(async () => {
         try {
             const resp = await fetch('/api/stats');
             const d = await resp.json();
+<<<<<<< HEAD
             renderImprovementSummary(d.improvement_summary || []);
             renderLiveErrorPanel(d.improvement_summary || [], `${d.phase}: ${d.feedback || ''}`);
+=======
+
+            document.getElementById('ui-phase').innerText = d.phase;
+            document.getElementById('ui-feedback').innerText = d.feedback;
+>>>>>>> d0b9a608119eda0d90f7d0f8c11feae711db174b
         } catch (e) {
         }
     }

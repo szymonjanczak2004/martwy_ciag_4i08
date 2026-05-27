@@ -6,16 +6,8 @@ import math
 import time
 import sqlite3
 import threading
-<<<<<<< HEAD
-import queue
-import json
-from collections import deque
-from dataclasses import dataclass, field
-from typing import Deque, List, Optional, Tuple
-=======
 from dataclasses import dataclass, field
 from typing import List, Optional, Tuple
->>>>>>> d0b9a608119eda0d90f7d0f8c11feae711db174b
 
 import numpy as np
 import mediapipe as mp
@@ -55,20 +47,6 @@ HEAD_DOWN_THRESHOLD = 25
 
 SESSION_DB = "deadlift_history.db"
 
-<<<<<<< HEAD
-START_EXIT_HIP_ANGLE = START_HIP_ANGLE_MAX + 8
-START_REENTER_HIP_ANGLE = START_HIP_ANGLE_MAX - 4
-TOP_EXIT_HIP_ANGLE = TOP_HIP_ANGLE_MIN - 10
-START_HOLD_FRAMES_TO_CONFIRM = 3
-CALIBRATION_HOLD_FRAMES_REQUIRED = 18
-CALIBRATION_STRAIGHT_HIP_MIN = 160
-CALIBRATION_STRAIGHT_KNEE_MIN = 160
-BAR_PATH_MAXLEN = 150
-BAR_PATH_X_DEVIATION_RATIO = 0.05
-BAR_PATH_ERROR = "Sztanga ucieka od pionu"
-
-=======
->>>>>>> d0b9a608119eda0d90f7d0f8c11feae711db174b
 
 # =========================
 # Pomocnicze funkcje
@@ -96,17 +74,6 @@ def midpoint(a: Tuple[float, float], b: Tuple[float, float]) -> Tuple[float, flo
     return ((a[0] + b[0]) / 2.0, (a[1] + b[1]) / 2.0)
 
 
-<<<<<<< HEAD
-def point_distance(a: Tuple[float, float], b: Tuple[float, float]) -> float:
-    return float(math.hypot(a[0] - b[0], a[1] - b[1]))
-
-
-def make_bar_path_deque() -> Deque[Tuple[int, int]]:
-    return deque(maxlen=BAR_PATH_MAXLEN)
-
-
-=======
->>>>>>> d0b9a608119eda0d90f7d0f8c11feae711db174b
 def draw_text_block(
         frame,
         lines: List[str],
@@ -199,23 +166,6 @@ def init_db():
         )
         """
     )
-<<<<<<< HEAD
-
-    cur.execute(
-        """
-        CREATE TABLE IF NOT EXISTS session_reps (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            session_id INTEGER NOT NULL,
-            rep_index INTEGER NOT NULL,
-            score REAL NOT NULL,
-            duration_sec REAL NOT NULL,
-            errors_json TEXT NOT NULL,
-            FOREIGN KEY(session_id) REFERENCES sessions(id)
-        )
-        """
-    )
-=======
->>>>>>> d0b9a608119eda0d90f7d0f8c11feae711db174b
     conn.commit()
 
     # bezpieczna próba dodania kolumny dla starszej bazy
@@ -228,11 +178,7 @@ def init_db():
     conn.close()
 
 
-<<<<<<< HEAD
-def save_session(reps_total: int, reps_good: int, reps_bad: int, avg_score: float, duration_sec: float, source_type: str) -> int:
-=======
 def save_session(reps_total: int, reps_good: int, reps_bad: int, avg_score: float, duration_sec: float, source_type: str):
->>>>>>> d0b9a608119eda0d90f7d0f8c11feae711db174b
     conn = sqlite3.connect(SESSION_DB)
     cur = conn.cursor()
     cur.execute(
@@ -242,32 +188,6 @@ def save_session(reps_total: int, reps_good: int, reps_bad: int, avg_score: floa
         """,
         (reps_total, reps_good, reps_bad, avg_score, duration_sec, source_type),
     )
-<<<<<<< HEAD
-    session_id = int(cur.lastrowid)
-    conn.commit()
-    conn.close()
-    return session_id
-
-
-def save_session_reps(session_id: int, rep_results: List["RepResult"]):
-    conn = sqlite3.connect(SESSION_DB)
-    cur = conn.cursor()
-    for rep in rep_results:
-        cur.execute(
-            """
-            INSERT INTO session_reps (session_id, rep_index, score, duration_sec, errors_json)
-            VALUES (?, ?, ?, ?, ?)
-            """,
-            (
-                int(session_id),
-                int(rep.index),
-                float(rep.score),
-                float(rep.duration_sec),
-                json.dumps(rep.errors, ensure_ascii=False),
-            ),
-        )
-=======
->>>>>>> d0b9a608119eda0d90f7d0f8c11feae711db174b
     conn.commit()
     conn.close()
 
@@ -279,11 +199,6 @@ def save_session_reps(session_id: int, rep_results: List["RepResult"]):
 class RepEvaluation:
     errors: List[str] = field(default_factory=list)
     score: float = 100.0
-<<<<<<< HEAD
-    started_at: float = 0.0
-    ended_at: float = 0.0
-=======
->>>>>>> d0b9a608119eda0d90f7d0f8c11feae711db174b
 
     def finalize(self):
         penalty = len(set(self.errors)) * 12
@@ -291,17 +206,6 @@ class RepEvaluation:
 
 
 @dataclass
-<<<<<<< HEAD
-class RepResult:
-    index: int
-    score: float
-    errors: List[str]
-    duration_sec: float
-
-
-@dataclass
-=======
->>>>>>> d0b9a608119eda0d90f7d0f8c11feae711db174b
 class TrainerState:
     rep_count: int = 0
     good_reps: int = 0
@@ -311,25 +215,6 @@ class TrainerState:
     rep_eval: Optional[RepEvaluation] = None
     session_scores: List[float] = field(default_factory=list)
     start_time: float = field(default_factory=time.time)
-<<<<<<< HEAD
-    mode: str = "IDLE"  # IDLE -> RECORDING -> ANALYZING
-    rep_results: List[RepResult] = field(default_factory=list)
-    analysis_rep_idx: int = 0
-    start_hold_frames: int = 0
-    is_calibrated: bool = False
-    calibration_hold_frames: int = 0
-    dyn_start_hip_min: float = START_HIP_ANGLE_MIN
-    dyn_start_hip_max: float = START_HIP_ANGLE_MAX
-    top_hip_angle_min: float = TOP_HIP_ANGLE_MIN
-    top_knee_angle_min: float = TOP_KNEE_ANGLE_MIN
-    start_exit_hip_angle: float = START_EXIT_HIP_ANGLE
-    start_reenter_hip_angle: float = START_REENTER_HIP_ANGLE
-    top_exit_hip_angle: float = TOP_EXIT_HIP_ANGLE
-    torso_leg_ratio: float = 1.0
-    calibration_ratio_samples: List[float] = field(default_factory=list)
-    bar_path: Deque[Tuple[int, int]] = field(default_factory=make_bar_path_deque)
-=======
->>>>>>> d0b9a608119eda0d90f7d0f8c11feae711db174b
 
 
 # =========================
@@ -352,36 +237,6 @@ class DeadliftTrainer:
         self.voice = VoiceAssistant(enabled=USE_VOICE)
         self.state = TrainerState()
         self.prev_values = {}
-<<<<<<< HEAD
-        self.command_queue: "queue.Queue[str]" = queue.Queue()
-        self.calibration_enabled = True
-
-    def apply_body_ratio_calibration(self, ratio: float):
-        ratio = clamp(ratio, 0.55, 1.55)
-        # Niskie T/N (dlugie nogi) -> wyzszy wymagany kat biodra w pozycji startowej.
-        delta = clamp((0.92 - ratio) * 35.0, -8.0, 10.0)
-
-        self.state.torso_leg_ratio = ratio
-        self.state.dyn_start_hip_min = START_HIP_ANGLE_MIN + delta
-        self.state.dyn_start_hip_max = START_HIP_ANGLE_MAX + delta
-        self.state.start_exit_hip_angle = self.state.dyn_start_hip_max + 8.0
-        self.state.start_reenter_hip_angle = self.state.dyn_start_hip_max - 4.0
-        self.state.top_hip_angle_min = TOP_HIP_ANGLE_MIN
-        self.state.top_knee_angle_min = TOP_KNEE_ANGLE_MIN
-        self.state.top_exit_hip_angle = TOP_HIP_ANGLE_MIN - 10.0
-        self.state.is_calibrated = True
-
-    def append_bar_path_point(self, frame, wrist_norm: Tuple[float, float]):
-        h, w = frame.shape[:2]
-        self.state.bar_path.append((int(wrist_norm[0] * w), int(wrist_norm[1] * h)))
-
-    def check_bar_path_vertical_deviation(self, frame_width: int) -> bool:
-        if len(self.state.bar_path) < 2:
-            return False
-        xs = [p[0] for p in self.state.bar_path]
-        return (max(xs) - min(xs)) > (BAR_PATH_X_DEVIATION_RATIO * frame_width)
-=======
->>>>>>> d0b9a608119eda0d90f7d0f8c11feae711db174b
 
     def smooth(self, key: str, value: float) -> float:
         if key not in self.prev_values:
@@ -491,98 +346,22 @@ class DeadliftTrainer:
 
         return metrics, errors
 
-<<<<<<< HEAD
-    def start_series(self):
-        self.reset_session()
-        self.state.mode = "RECORDING"
-        self.state.start_time = time.time()
-
-        if self.calibration_enabled:
-            self.state.current_phase = "CALIBRATING"
-            self.state.is_calibrated = False
-            self.state.calibration_hold_frames = 0
-            self.state.calibration_ratio_samples = []
-            self.state.feedback = "Stan prosto bokiem do kamery, aby przeprowadzic kalibracje"
-            self.voice.say("Stan prosto bokiem do kamery, aby przeprowadzic kalibracje")
-        else:
-            self.state.current_phase = "WAIT_START"
-            self.state.is_calibrated = True
-            self.state.feedback = "Analiza pliku wideo - wykrywanie powtorzen"
-
-    def stop_series(self):
-        if self.state.mode != "RECORDING":
-            self.state.mode = "ANALYZING"
-            self.state.feedback = "Tryb analizy"
-            return
-
-        self.state.mode = "ANALYZING"
-        self.state.rep_eval = None
-        self.state.current_phase = "STOPPED"
-        self.state.feedback = "STOP: analiza serii"
-        self.voice.say("Stop. Analiza serii")
-        self.state.analysis_rep_idx = 0
-
-    def handle_pending_commands(self):
-        while True:
-            try:
-                cmd = self.command_queue.get_nowait()
-            except queue.Empty:
-                break
-
-            cmd = (cmd or "").strip().lower()
-            if cmd == "start":
-                self.start_series()
-            elif cmd == "stop":
-                self.stop_series()
-
-    def update_state_machine(self, metrics: dict, current_errors: List[str]):
-        if self.state.mode != "RECORDING":
-            return
-        if self.state.current_phase == "CALIBRATING":
-            return
-
-        hip_angle = metrics["hip_angle"]
-        knee_angle = metrics["knee_angle"]
-
-        in_start_position = self.state.dyn_start_hip_min <= hip_angle <= self.state.dyn_start_hip_max
-        in_top_position = hip_angle >= self.state.top_hip_angle_min and knee_angle >= self.state.top_knee_angle_min
-=======
     def update_state_machine(self, metrics: dict, current_errors: List[str]):
         hip_angle = metrics["hip_angle"]
         knee_angle = metrics["knee_angle"]
 
         in_start_position = START_HIP_ANGLE_MIN <= hip_angle <= START_HIP_ANGLE_MAX
         in_top_position = hip_angle >= TOP_HIP_ANGLE_MIN and knee_angle >= TOP_KNEE_ANGLE_MIN
->>>>>>> d0b9a608119eda0d90f7d0f8c11feae711db174b
 
         phase = self.state.current_phase
 
         if phase == "WAIT_START":
             self.state.feedback = "Ustaw pozycje startowa"
             if in_start_position:
-<<<<<<< HEAD
-                self.state.feedback = "Pozycja startowa wykryta - rozpocznij ruch w gore"
-                self.state.current_phase = "READY"
-                self.state.start_hold_frames = 0
-
-        elif phase == "READY":
-            self.state.feedback = "Czekam na rozpoczecie ruchu"
-            if in_start_position and hip_angle <= self.state.start_reenter_hip_angle:
-                self.state.start_hold_frames += 1
-            else:
-                self.state.start_hold_frames = 0
-
-            if hip_angle >= self.state.start_exit_hip_angle:
-                self.state.current_phase = "GOING_UP"
-                self.state.rep_eval = RepEvaluation(started_at=time.time())
-                self.state.bar_path.clear()
-                self.state.start_hold_frames = 0
-=======
                 self.state.feedback = "Pozycja startowa wykryta - zacznij ruch"
                 self.voice.say("Pozycja startowa wykryta")
                 self.state.current_phase = "GOING_UP"
                 self.state.rep_eval = RepEvaluation()
->>>>>>> d0b9a608119eda0d90f7d0f8c11feae711db174b
 
         elif phase == "GOING_UP":
             self.state.feedback = "Ruch w gore"
@@ -598,11 +377,7 @@ class DeadliftTrainer:
             if self.state.rep_eval is not None:
                 self.state.rep_eval.errors.extend(current_errors)
 
-<<<<<<< HEAD
-            if hip_angle < self.state.top_exit_hip_angle:
-=======
             if hip_angle < 135:
->>>>>>> d0b9a608119eda0d90f7d0f8c11feae711db174b
                 self.state.current_phase = "GOING_DOWN"
 
         elif phase == "GOING_DOWN":
@@ -611,22 +386,9 @@ class DeadliftTrainer:
                 self.state.rep_eval.errors.extend(current_errors)
 
             if in_start_position:
-<<<<<<< HEAD
-                self.state.start_hold_frames += 1
-            else:
-                self.state.start_hold_frames = 0
-
-            if self.state.start_hold_frames >= START_HOLD_FRAMES_TO_CONFIRM:
-                self.finish_rep()
-                self.state.current_phase = "READY"
-                self.state.rep_eval = None
-                self.state.start_hold_frames = 0
-                self.state.bar_path.clear()
-=======
                 self.finish_rep()
                 self.state.current_phase = "GOING_UP"
                 self.state.rep_eval = RepEvaluation()
->>>>>>> d0b9a608119eda0d90f7d0f8c11feae711db174b
 
     def finish_rep(self):
         self.state.rep_count += 1
@@ -634,29 +396,11 @@ class DeadliftTrainer:
         if self.state.rep_eval is None:
             self.state.rep_eval = RepEvaluation()
 
-<<<<<<< HEAD
-        if self.state.rep_eval.started_at <= 0:
-            self.state.rep_eval.started_at = time.time()
-        self.state.rep_eval.ended_at = time.time()
-=======
->>>>>>> d0b9a608119eda0d90f7d0f8c11feae711db174b
         self.state.rep_eval.finalize()
         score = self.state.rep_eval.score
         self.state.session_scores.append(score)
 
         uniq_errors = sorted(set(self.state.rep_eval.errors))
-<<<<<<< HEAD
-        duration_sec = max(0.0, self.state.rep_eval.ended_at - self.state.rep_eval.started_at)
-        self.state.rep_results.append(
-            RepResult(
-                index=self.state.rep_count,
-                score=float(score),
-                errors=uniq_errors,
-                duration_sec=float(duration_sec),
-            )
-        )
-=======
->>>>>>> d0b9a608119eda0d90f7d0f8c11feae711db174b
         if len(uniq_errors) == 0 and score >= 85:
             self.state.good_reps += 1
             self.state.feedback = f"Powtorzenie {self.state.rep_count} zaliczone"
@@ -670,12 +414,6 @@ class DeadliftTrainer:
                 self.state.feedback = f"Powtorzenie {self.state.rep_count} z bledami"
 
     def draw_overlay(self, frame, metrics: dict, errors: List[str], source_label: str):
-<<<<<<< HEAD
-        # Parametry i statystyki tylko w UI (Flask) / stanie sesji — nie rysujemy na obrazie.
-        if len(self.state.bar_path) >= 2:
-            pts = np.array(list(self.state.bar_path), dtype=np.int32)
-            cv2.polylines(frame, [pts], isClosed=False, color=(255, 255, 0), thickness=3)
-=======
         avg_score = np.mean(self.state.session_scores) if self.state.session_scores else 0.0
         lines = [
             f"Zrodlo: {source_label}",
@@ -727,17 +465,12 @@ class DeadliftTrainer:
             1,
             cv2.LINE_AA,
         )
->>>>>>> d0b9a608119eda0d90f7d0f8c11feae711db174b
 
     def reset_session(self):
         self.state = TrainerState()
         self.prev_values = {}
 
     def process_frame(self, frame, source_label: str):
-<<<<<<< HEAD
-        self.handle_pending_commands()
-=======
->>>>>>> d0b9a608119eda0d90f7d0f8c11feae711db174b
         rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         result = self.pose.process(rgb)
 
@@ -758,48 +491,7 @@ class DeadliftTrainer:
             if pts["visible"]:
                 metrics, errors = self.analyze_posture(pts)
 
-<<<<<<< HEAD
-                if self.state.mode == "RECORDING" and self.state.current_phase == "CALIBRATING":
-                    straight_pose = (
-                        metrics["hip_angle"] >= CALIBRATION_STRAIGHT_HIP_MIN and
-                        metrics["knee_angle"] >= CALIBRATION_STRAIGHT_KNEE_MIN
-                    )
-                    if straight_pose:
-                        self.state.calibration_hold_frames += 1
-                        torso_len = point_distance(pts["shoulder"], pts["hip"])
-                        leg_len = point_distance(pts["hip"], pts["ankle"])
-                        if leg_len > 1e-5:
-                            self.state.calibration_ratio_samples.append(torso_len / leg_len)
-                    else:
-                        self.state.calibration_hold_frames = 0
-                        self.state.calibration_ratio_samples = []
-
-                    hold = self.state.calibration_hold_frames
-                    self.state.feedback = (
-                        f"Stan prosto bokiem do kamery, aby przeprowadzic kalibracje ({hold}/{CALIBRATION_HOLD_FRAMES_REQUIRED})"
-                    )
-                    if hold >= CALIBRATION_HOLD_FRAMES_REQUIRED and self.state.calibration_ratio_samples:
-                        ratio = float(np.median(self.state.calibration_ratio_samples))
-                        self.apply_body_ratio_calibration(ratio)
-                        self.state.current_phase = "WAIT_START"
-                        self.state.calibration_hold_frames = 0
-                        self.state.calibration_ratio_samples = []
-                        self.state.feedback = "Kalibracja zakonczona. Ustaw pozycje startowa."
-                        self.voice.say("Kalibracja zakonczona")
-                elif self.state.mode == "RECORDING" and self.state.current_phase in ("GOING_UP", "GOING_DOWN"):
-                    self.append_bar_path_point(frame, pts["wrist"])
-                    if (
-                        self.state.current_phase == "GOING_UP" and
-                        self.state.rep_eval is not None and
-                        self.check_bar_path_vertical_deviation(frame.shape[1])
-                    ):
-                        if BAR_PATH_ERROR not in self.state.rep_eval.errors:
-                            self.state.rep_eval.errors.append(BAR_PATH_ERROR)
-
-                if errors and self.state.mode == "RECORDING" and self.state.current_phase != "CALIBRATING":
-=======
                 if errors:
->>>>>>> d0b9a608119eda0d90f7d0f8c11feae711db174b
                     priority = errors[0]
                     self.state.feedback = priority
 
@@ -879,22 +571,6 @@ def main():
     paused = False
     session_started = time.time()
 
-<<<<<<< HEAD
-    def command_input_worker():
-        while True:
-            try:
-                cmd = input().strip()
-            except Exception:
-                break
-            if not cmd:
-                continue
-            trainer.command_queue.put(cmd)
-
-    threading.Thread(target=command_input_worker, daemon=True).start()
-    print("\nKomendy: wpisz 'start' aby rozpoczac serie, 'stop' aby zakonczyc i przejsc do analizy.\n")
-
-=======
->>>>>>> d0b9a608119eda0d90f7d0f8c11feae711db174b
     while True:
         if not paused:
             ok, frame = cap.read()
@@ -934,24 +610,11 @@ def main():
             trainer.reset_session()
         elif key == ord(' '):
             paused = not paused
-<<<<<<< HEAD
-        elif key == 81:  # left arrow
-            if trainer.state.mode == "ANALYZING" and trainer.state.rep_results:
-                trainer.state.analysis_rep_idx = max(0, trainer.state.analysis_rep_idx - 1)
-        elif key == 83:  # right arrow
-            if trainer.state.mode == "ANALYZING" and trainer.state.rep_results:
-                trainer.state.analysis_rep_idx = min(len(trainer.state.rep_results) - 1, trainer.state.analysis_rep_idx + 1)
-=======
->>>>>>> d0b9a608119eda0d90f7d0f8c11feae711db174b
 
     duration = time.time() - session_started
     avg_score = float(np.mean(trainer.state.session_scores)) if trainer.state.session_scores else 0.0
 
-<<<<<<< HEAD
-    session_id = save_session(
-=======
     save_session(
->>>>>>> d0b9a608119eda0d90f7d0f8c11feae711db174b
         reps_total=trainer.state.rep_count,
         reps_good=trainer.state.good_reps,
         reps_bad=trainer.state.bad_reps,
@@ -959,11 +622,6 @@ def main():
         duration_sec=duration,
         source_type=source_info["type"]
     )
-<<<<<<< HEAD
-    if trainer.state.rep_results:
-        save_session_reps(session_id, trainer.state.rep_results)
-=======
->>>>>>> d0b9a608119eda0d90f7d0f8c11feae711db174b
 
     cap.release()
     cv2.destroyAllWindows()
