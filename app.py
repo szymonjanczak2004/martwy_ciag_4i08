@@ -5,11 +5,7 @@ import numpy as np
 import sqlite3
 from flask import Flask, render_template, Response, jsonify, request
 from werkzeug.utils import secure_filename
-<<<<<<< HEAD
 from kod import DeadliftTrainer, SESSION_DB, init_db, save_session, save_session_reps
-=======
-from kod import DeadliftTrainer, SESSION_DB
->>>>>>> d0b9a608119eda0d90f7d0f8c11feae711db174b
 
 app = Flask(__name__)
 
@@ -23,19 +19,13 @@ vision_trainer = DeadliftTrainer()
 cap = None
 # Zmieniamy domyślny start na 'None' (pusty ekran, czeka na akcję)
 current_source = None
-<<<<<<< HEAD
 last_saved_rep_count = 0
-=======
->>>>>>> d0b9a608119eda0d90f7d0f8c11feae711db174b
 
 # ==========================================
 # BAZA DANYCH - HISTORIA TRENINGÓW
 # ==========================================
 def init_training_db():
-<<<<<<< HEAD
     init_db()
-=======
->>>>>>> d0b9a608119eda0d90f7d0f8c11feae711db174b
     conn = sqlite3.connect(SESSION_DB)
     cur = conn.cursor()
     cur.execute("""
@@ -53,15 +43,23 @@ def init_training_db():
             block_id INTEGER,
             weight REAL,
             reps INTEGER,
+            ai_analysis_json TEXT,
             FOREIGN KEY(block_id) REFERENCES manual_training_blocks(id)
         )
     """)
     conn.commit()
+    
+    # Bezpieczna próba dodania kolumny ai_analysis_json do manual_sets (dla starszych wersji bazy)
+    try:
+        cur.execute("ALTER TABLE manual_sets ADD COLUMN ai_analysis_json TEXT")
+        conn.commit()
+    except sqlite3.OperationalError:
+        pass
+        
     conn.close()
 
 init_training_db()
 
-<<<<<<< HEAD
 ERROR_TIPS = {
     "Zaokraglone plecy": "Napnij brzuch i ustaw neutralny kregoslup, barki trzymaj nad sztanga.",
     "Biodra za nisko": "Podnies biodra odrobine wyzej przed oderwaniem sztangi od podlogi.",
@@ -112,14 +110,11 @@ def persist_current_ai_session_if_needed():
         save_session_reps(session_id, vision_trainer.state.rep_results)
     last_saved_rep_count = reps_total
 
-=======
->>>>>>> d0b9a608119eda0d90f7d0f8c11feae711db174b
 # ==========================================
 # STRUMIENIOWANIE OBRAZU I AI
 # ==========================================
 def get_stream():
     global cap, vision_trainer, current_source
-<<<<<<< HEAD
     file_read_failures = 0
     max_file_read_failures = 25
     auto_video_started = False
@@ -135,11 +130,6 @@ def get_stream():
         # 1. STAN BEZCZYNNOŚCI (pusty ekran, gdy nie ma wideo/kamery)
         if current_source is None:
             file_read_failures = 0
-=======
-    while True:
-        # 1. STAN BEZCZYNNOŚCI (pusty ekran, gdy nie ma wideo/kamery)
-        if current_source is None:
->>>>>>> d0b9a608119eda0d90f7d0f8c11feae711db174b
             # Generowanie czarnej klatki
             frame = np.zeros((480, 640, 3), dtype=np.uint8)
             # Rysowanie wyśrodkowanego napisu instruktażowego
@@ -157,17 +147,13 @@ def get_stream():
             cap = cv2.VideoCapture(current_source)
             if not cap.isOpened():
                 current_source = None
-<<<<<<< HEAD
                 cap = None
-=======
->>>>>>> d0b9a608119eda0d90f7d0f8c11feae711db174b
                 continue
 
         # 3. ODCZYT KLATKI
         success, frame = cap.read()
         if not success:
             if isinstance(current_source, str):
-<<<<<<< HEAD
                 frame_count = cap.get(cv2.CAP_PROP_FRAME_COUNT) or 0
                 current_pos = cap.get(cv2.CAP_PROP_POS_FRAMES) or 0
                 reached_end = frame_count > 0 and current_pos >= (frame_count - 1)
@@ -198,24 +184,13 @@ def get_stream():
                 time.sleep(0.01)
             continue
         file_read_failures = 0
-=======
-                # Jeśli to był plik i się skończył -> Wróć do stanu bezczynności
-                cap.release()
-                cap = None
-                current_source = None
-                vision_trainer.reset_session()
-            continue
->>>>>>> d0b9a608119eda0d90f7d0f8c11feae711db174b
 
         # Lustro tylko dla kamery na żywo
         if current_source == 0:
             frame = cv2.flip(frame, 1)
-<<<<<<< HEAD
         elif isinstance(current_source, str) and not auto_video_started:
             vision_trainer.start_series()
             auto_video_started = True
-=======
->>>>>>> d0b9a608119eda0d90f7d0f8c11feae711db174b
 
         processed = vision_trainer.process_frame(frame, "Live" if current_source == 0 else "Video File")
         ret, buffer = cv2.imencode('.jpg', processed)
@@ -236,7 +211,6 @@ def video_feed():
 
 @app.route('/api/stats')
 def stats():
-<<<<<<< HEAD
     rep_details = []
     for rep in vision_trainer.state.rep_results:
         rep_details.append({
@@ -275,24 +249,12 @@ def control_analysis():
 
     return jsonify({"status": "error", "message": "Nieznana akcja"}), 400
 
-=======
-    return jsonify({
-        "reps": vision_trainer.state.rep_count,
-        "good_reps": vision_trainer.state.good_reps,
-        "phase": vision_trainer.state.current_phase,
-        "feedback": vision_trainer.state.feedback
-    })
-
->>>>>>> d0b9a608119eda0d90f7d0f8c11feae711db174b
 @app.route('/set_live', methods=['POST'])
 def set_live():
     global current_source, cap, vision_trainer
     if cap: cap.release()
     current_source = 0
-<<<<<<< HEAD
     vision_trainer.calibration_enabled = True
-=======
->>>>>>> d0b9a608119eda0d90f7d0f8c11feae711db174b
     vision_trainer.reset_session()
     return jsonify({"status": "ok"})
 
@@ -312,10 +274,7 @@ def upload_video():
 
     if cap: cap.release()
     current_source = filepath
-<<<<<<< HEAD
     vision_trainer.calibration_enabled = False
-=======
->>>>>>> d0b9a608119eda0d90f7d0f8c11feae711db174b
     vision_trainer.reset_session()
 
     return jsonify({"status": "ok", "filename": filename})
@@ -324,28 +283,23 @@ def upload_video():
 @app.route('/stop_feed', methods=['POST'])
 def stop_feed():
     global current_source, cap, vision_trainer
-<<<<<<< HEAD
     persist_current_ai_session_if_needed()
     if cap: cap.release()
     cap = None
     current_source = None
     vision_trainer.calibration_enabled = True
-=======
-    if cap: cap.release()
-    cap = None
-    current_source = None
->>>>>>> d0b9a608119eda0d90f7d0f8c11feae711db174b
     vision_trainer.reset_session()
     return jsonify({"status": "ok"})
 
 @app.route('/api/save_training_block', methods=['POST'])
 def save_training_block():
+    import json
     data = request.json
     sets = data.get('sets', [])
     if not sets: return jsonify({"error": "Brak danych"}), 400
 
-    total_reps = sum(int(s['reps']) for s in sets)
-    avg_weight = sum(float(s['weight']) for s in sets) / len(sets)
+    total_reps = sum(int(s.get('reps') or 0) for s in sets)
+    avg_weight = sum(float(s.get('weight') or 0) for s in sets) / len(sets) if sets else 0.0
 
     conn = sqlite3.connect(SESSION_DB)
     cur = conn.cursor()
@@ -354,8 +308,10 @@ def save_training_block():
     block_id = cur.lastrowid
 
     for s in sets:
-        cur.execute("INSERT INTO manual_sets (block_id, weight, reps) VALUES (?, ?, ?)",
-                    (block_id, s['weight'], s['reps']))
+        ai_analysis = s.get('ai_analysis')
+        ai_json = json.dumps(ai_analysis, ensure_ascii=False) if ai_analysis else None
+        cur.execute("INSERT INTO manual_sets (block_id, weight, reps, ai_analysis_json) VALUES (?, ?, ?, ?)",
+                    (block_id, s.get('weight') or 0, s.get('reps') or 0, ai_json))
 
     conn.commit()
     conn.close()
@@ -363,20 +319,44 @@ def save_training_block():
 
 @app.route('/api/history')
 def get_history():
+    import json
     conn = sqlite3.connect(SESSION_DB)
     cur = conn.cursor()
-    cur.execute("SELECT date, total_sets, total_reps, avg_weight FROM manual_training_blocks ORDER BY id DESC")
-    rows = cur.fetchall()
-    conn.close()
+    cur.execute("SELECT id, date, total_sets, total_reps, avg_weight FROM manual_training_blocks ORDER BY id DESC")
+    blocks = cur.fetchall()
 
     history = []
-    for r in rows:
+    for b in blocks:
+        block_id, date, total_sets, total_reps, avg_weight = b
+        
+        cur.execute("SELECT id, weight, reps, ai_analysis_json FROM manual_sets WHERE block_id = ?", (block_id,))
+        sets_rows = cur.fetchall()
+        
+        sets_list = []
+        for sr in sets_rows:
+            set_id, weight, reps, ai_analysis_json = sr
+            ai_analysis = None
+            if ai_analysis_json:
+                try:
+                    ai_analysis = json.loads(ai_analysis_json)
+                except Exception:
+                    pass
+            sets_list.append({
+                "id": set_id,
+                "weight": weight,
+                "reps": reps,
+                "ai_analysis": ai_analysis
+            })
+            
         history.append({
-            "date": r[0],
-            "sets": r[1],
-            "reps": r[2],
-            "weight": round(r[3], 1)
+            "id": block_id,
+            "date": date,
+            "sets_count": total_sets,
+            "total_reps": total_reps,
+            "avg_weight": round(avg_weight, 1) if avg_weight is not None else 0.0,
+            "sets": sets_list
         })
+    conn.close()
     return jsonify(history)
 
 if __name__ == '__main__':

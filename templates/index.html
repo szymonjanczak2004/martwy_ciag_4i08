@@ -23,33 +23,6 @@
     
     <!-- SEKCJA TRENINGU -->
     <section id="training" class="tab-content active">
-<<<<<<< HEAD
-=======
-        
-        <!-- TOP LEFT: Proper Form -->
-        <div class="brutal-box form-box">
-             <div class="box-title">⚠ PROPER FORM</div>
-             <div class="rule-list">
-                <div class="rule-item">1. STOPY NA SZEROKOŚĆ BIODER</div>
-                <div class="rule-item">2. SZTANGA NAD ŚRODKIEM STOPY</div>
-                <div class="rule-item">3. CHWYĆ SZTANGĘ NA SZEROKOŚĆ RAMION</div>
-                <div class="rule-item">4. WYPNIJ KLATKĘ, PLECY PROSTE</div>
-                <div class="rule-item">5. BIODRA COFNIĘTE, ŁOPATKI ŚCIĄGNIĘTE</div>
-                <div class="rule-item">6. NAPNIJ CAŁE CIAŁO I UNIEŚ</div>
-            </div>
-        </div>
-
-        <!-- TOP RIGHT: Analysis -->
-        <div class="brutal-box analysis-box">
-            <div class="box-title">📹 AI ANALYSIS</div>
-            <div class="camera-status">
-                <h2 id="ui-phase">WAIT_START</h2>
-                <p id="ui-feedback">Zajmij pozycję przed kamerą</p>
-            </div>
-        </div>
-
-        <!-- BOTTOM LEFT: Video Box -->
->>>>>>> d0b9a608119eda0d90f7d0f8c11feae711db174b
         <div class="brutal-box video-box">
             <div class="box-title">📷 VIDEO</div>
             
@@ -64,7 +37,6 @@
             </div>
         </div>
 
-<<<<<<< HEAD
         <div class="brutal-box form-box">
              <div class="box-title">⚠ ANALIZA BŁĘDÓW</div>
              <div class="analysis-controls">
@@ -72,20 +44,31 @@
                 <button class="btn btn-stop" onclick="sendAnalysisControl('stop')">STOP + ANALIZA</button>
             </div>
             <div class="analysis-summary">
-                <h3>Co poprawić w serii</h3>
+                <h3>Co poprawić w całej serii</h3>
                 <ul id="improvement-summary-list" class="improvement-list">
                     <li>Brak danych - uruchom serię przyciskiem START.</li>
                 </ul>
             </div>
-            <div class="rule-list" id="live-error-list">
+            <div class="rep-details-section" id="rep-details-section" style="display: none; margin-top: 20px;">
+                <h3>Szczegóły każdego powtórzenia:</h3>
+                <div id="rep-details-list" class="rep-details-list">
+                    <!-- Karty powtórzeń będą generowane dynamicznie -->
+                </div>
+            </div>
+            <div id="standalone-save-container" style="display: none; margin-top: 15px; padding: 15px; background: #000; border: 3px solid #fff; color: #fff; box-shadow: 4px 4px 0px #000;">
+                <p style="margin: 0 0 10px 0; font-family: 'Arial Black', sans-serif;">➕ Zapisz tę serię do historii:</p>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span>Ciężar (kg):</span>
+                    <input type="number" id="standalone-weight-input" style="width: 80px; padding: 5px; font-weight: bold; font-size: 1.1rem;" value="60">
+                    <button class="btn btn-live" onclick="saveStandaloneSet()" style="padding: 5px 15px; font-size: 1rem; box-shadow: 2px 2px 0px #000;">ZAPISZ</button>
+                </div>
+            </div>
+            <div class="rule-list" id="live-error-list" style="margin-top: 20px;">
                 <div class="rule-item">Uruchom START, aby rozpocząć analizę techniki.</div>
                 <div class="rule-item">Po STOP zobaczysz pełne wskazówki dla serii i powtórzeń.</div>
             </div>
         </div>
 
-=======
-        <!-- BOTTOM RIGHT: Current Set -->
->>>>>>> d0b9a608119eda0d90f7d0f8c11feae711db174b
         <div class="brutal-box set-box" id="current-set-container">
             <div class="box-title">✚ NEW TRAINING BLOCK</div>
             
@@ -102,10 +85,7 @@
                 <button class="btn btn-cancel" onclick="resetBlockForm()">ANULUJ</button>
             </div>
         </div>
-<<<<<<< HEAD
 
-=======
->>>>>>> d0b9a608119eda0d90f7d0f8c11feae711db174b
     </section>
 
     <!-- SEKCJA HISTORII -->
